@@ -1,0 +1,84 @@
+local player = game.Players.LocalPlayer
+local pgui = player:WaitForChild("PlayerGui")
+local uis = game:GetService("UserInputService")
+local runService = game:GetService("RunService")
+
+local sg = Instance.new("ScreenGui", pgui)
+sg.Name = "HomerHubFinal"
+sg.ResetOnSpawn = false
+
+local frame = Instance.new("Frame", sg)
+frame.Size = UDim2.new(0, 180, 0, 130)
+frame.Position = UDim2.new(0.5, -90, 0.5, -65)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+
+local corner = Instance.new("UICorner", frame)
+corner.CornerRadius = UDim.new(0, 10)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 25)
+title.BackgroundTransparency = 1
+title.Text = "you vs homer"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 14
+
+local credit = Instance.new("TextLabel", frame)
+credit.Size = UDim2.new(1, 0, 0, 20)
+credit.Position = UDim2.new(0, 0, 0, 22)
+credit.BackgroundTransparency = 1
+credit.Text = "by gizemliyom"
+credit.TextColor3 = Color3.fromRGB(150, 150, 150)
+credit.Font = Enum.Font.Gotham
+credit.TextSize = 10
+
+local farmBtn = Instance.new("TextButton", frame)
+farmBtn.Size = UDim2.new(1, -20, 0, 40)
+farmBtn.Position = UDim2.new(0, 10, 0, 45)
+farmBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+farmBtn.Text = "AUTO FARM: OFF"
+farmBtn.TextColor3 = Color3.new(1, 1, 1)
+farmBtn.Font = Enum.Font.GothamBold
+farmBtn.TextSize = 13
+Instance.new("UICorner", farmBtn).CornerRadius = UDim.new(0, 6)
+
+local infoLabel = Instance.new("TextLabel", frame)
+infoLabel.Size = UDim2.new(1, -20, 0, 35)
+infoLabel.Position = UDim2.new(0, 10, 0, 90)
+infoLabel.BackgroundTransparency = 1
+infoLabel.Text = "Ara sıra kapa aç yap\nToggle it on and off"
+infoLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+infoLabel.Font = Enum.Font.SourceSansItalic
+infoLabel.TextSize = 12
+
+local farmActive = false
+local connection
+
+farmBtn.MouseButton1Click:Connect(function()
+    farmActive = not farmActive
+    farmBtn.Text = farmActive and "AUTO FARM: ON" or "AUTO FARM: OFF"
+    farmBtn.BackgroundColor3 = farmActive and Color3.fromRGB(40, 180, 40) or Color3.fromRGB(180, 40, 40)
+    
+    local char = player.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    
+    if farmActive and root then
+        connection = runService.Heartbeat:Connect(function()
+            if farmActive and root then
+                local oldCFrame = root.CFrame
+                root.CFrame = root.CFrame * CFrame.new(math.random(-50, 50), 0, math.random(-50, 50))
+                runService.RenderStepped:Wait()
+                root.CFrame = oldCFrame
+            end
+        end)
+    else
+        if connection then 
+            connection:Disconnect() 
+            connection = nil
+        end
+    end
+end)
+
